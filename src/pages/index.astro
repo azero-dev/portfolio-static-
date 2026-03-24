@@ -1,0 +1,97 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Section from '../components/layout/Section.astro';
+import BlogList from '../components/blog/BlogList.astro';
+import BlogSidebar from '../components/blog/BlogSidebar.astro';
+import { getCollection } from 'astro:content';
+
+export const prerender = true;
+
+// Get all posts
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+allPosts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+
+// Pagination settings
+const postsPerPage = 15;
+const totalPosts = allPosts.length;
+const totalPages = Math.ceil(totalPosts / postsPerPage);
+const currentPage = 1;
+
+// Get posts for current page
+const startIndex = (currentPage - 1) * postsPerPage;
+const endIndex = startIndex + postsPerPage;
+const pagePosts = allPosts.slice(startIndex, endIndex);
+
+// Helper to generate page URLs
+const getPageUrl = (pageNum: number) => {
+  return pageNum === 1 ? '/' : `/page/${pageNum}`;
+};
+
+// SEO metadata
+const title = 'Blog';
+const description = 'Thoughts on technology, design, and the cyberpunk future.';
+const canonicalUrl = Astro.url.href;
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  type="website"
+  tags={[]}
+>
+  <Section padding="xl">
+    <Container>
+      <div class="text-center mb-12">
+        <h1 class="font-mono text-4xl md:text-5xl font-bold tracking-tighter mb-4">
+          &gt;blog_
+        </h1>
+        <p class="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Thoughts on technology, design, and the cyberpunk future.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main content - Blog posts */}
+        <div class="lg:col-span-2">
+           <BlogList posts={pagePosts} />
+        </div>
+
+        {/* Sidebar */}
+        <div class="lg:col-span-1">
+          <div class="sticky top-24">
+              <BlogSidebar />
+          </div>
+        </div>
+      </div>
+
+      {/* Pagination (simplified for now) */}
+      {totalPages > 1 && (
+        <Section padding="md">
+          <div class="flex justify-center items-center gap-4">
+              {currentPage > 1 && (
+                <a
+                  href={getPageUrl(currentPage - 1)}
+                  class="font-mono text-sm text-primary hover:underline"
+                >
+                  ← Previous
+                </a>
+              )}
+            <span class="font-mono text-sm text-muted-foreground">
+              Page {currentPage} of {totalPages}
+            </span>
+            {currentPage < totalPages && (
+              <a
+                  href={getPageUrl(currentPage + 1)}
+                class="font-mono text-sm text-primary hover:underline"
+              >
+                Next →
+              </a>
+            )}
+          </div>
+        </Section>
+      )}
+    </Container>
+  </Section>
+</Layout>
