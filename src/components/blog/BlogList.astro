@@ -71,7 +71,7 @@ if (limit && limit > 0) {
           </div>
           <div class="mt-auto">
             <Button variant="outline" size="sm" asChild>
-              <a href={`/post/${post.id}`}>Read Post</a>
+              <a href={`/post/${new Date(post.data.pubDate).getFullYear()}/${(new Date(post.data.pubDate).getMonth() + 1).toString().padStart(2, '0')}/${post.id}`}>Read Post</a>
             </Button>
           </div>
         </CardContent>

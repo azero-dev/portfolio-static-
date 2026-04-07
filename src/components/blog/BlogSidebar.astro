@@ -51,7 +51,7 @@ const maxCount = allTags.length > 0 ? Math.max(...allTags.map(t => t.count)) : 1
           .map((post) => (
              <li>
               <a
-                href={`/post/${post.id}`}
+                href={`/post/${new Date(post.data.pubDate).getFullYear()}/${(new Date(post.data.pubDate).getMonth() + 1).toString().padStart(2, '0')}/${post.id}`}
                 class="group block p-3 rounded-md border border-border hover:border-primary transition-colors"
               >
                 <h4 class="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1">

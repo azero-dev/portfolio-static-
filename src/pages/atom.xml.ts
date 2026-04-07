@@ -18,7 +18,7 @@ export const GET: APIRoute = async (context) => {
       title: post.data.title,
       pubDate: post.data.pubDate,
       description: post.data.description,
-      link: `/post/${post.id}`,
+      link: `/post/${new Date(post.data.pubDate).getFullYear()}/${(new Date(post.data.pubDate).getMonth() + 1).toString().padStart(2, '0')}/${post.id}`,
       content: post.rendered ? post.rendered.toString() : post.data.description,
       categories: post.data.tags,
     })),

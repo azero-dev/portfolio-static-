@@ -67,7 +67,7 @@ const canonicalUrl = Astro.url.href;
                     ))}
                   </div>
                   <a
-                    href={`/post/${post.id}`}
+                    href={`/post/${new Date(post.data.pubDate).getFullYear()}/${(new Date(post.data.pubDate).getMonth() + 1).toString().padStart(2, '0')}/${post.id}`}
                     class="font-mono text-sm text-primary hover:underline mt-auto"
                   >
                     Read Post →

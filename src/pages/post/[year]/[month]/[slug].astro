@@ -1,7 +1,7 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Container from '../../components/layout/Container.astro';
-import Section from '../../components/layout/Section.astro';
+import Layout from '../../../../layouts/Layout.astro';
+import Container from '../../../../components/layout/Container.astro';
+import Section from '../../../../components/layout/Section.astro';
 import { getEntry, getCollection, render } from 'astro:content';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,10 +9,15 @@ import { Button } from '@/components/ui/button';
 // Generate static paths for all blog posts
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: { post },
-  }));
+  return posts.map((post) => {
+    const pubDate = new Date(post.data.pubDate);
+    const year = pubDate.getFullYear().toString();
+    const month = (pubDate.getMonth() + 1).toString().padStart(2, '0');
+    return {
+      params: { year, month, slug: post.id },
+      props: { post },
+    };
+  });
 }
 
 export const prerender = true;
@@ -162,7 +167,7 @@ const image = '/og-image.png';
               <div class="border border-border rounded-lg p-6 hover:border-primary transition-colors">
                 <p class="font-mono text-sm text-muted-foreground mb-2">Previous Post</p>
                 <h3 class="font-semibold text-lg mb-2">
-                  <a href={`/post/${prevPost.id}`} class="hover:text-primary transition-colors">
+                  <a href={`/post/${new Date(prevPost.data.pubDate).getFullYear()}/${(new Date(prevPost.data.pubDate).getMonth() + 1).toString().padStart(2, '0')}/${prevPost.id}`} class="hover:text-primary transition-colors">
                     {prevPost.data.title}
                   </a>
                 </h3>
@@ -179,7 +184,7 @@ const image = '/og-image.png';
               <div class="border border-border rounded-lg p-6 hover:border-primary transition-colors md:text-right">
                 <p class="font-mono text-sm text-muted-foreground mb-2">Next Post</p>
                 <h3 class="font-semibold text-lg mb-2">
-                  <a href={`/post/${nextPost.id}`} class="hover:text-primary transition-colors">
+                  <a href={`/post/${new Date(nextPost.data.pubDate).getFullYear()}/${(new Date(nextPost.data.pubDate).getMonth() + 1).toString().padStart(2, '0')}/${nextPost.id}`} class="hover:text-primary transition-colors">
                     {nextPost.data.title}
                   </a>
                 </h3>
@@ -202,7 +207,7 @@ const image = '/og-image.png';
                 {relatedPosts.map((related) => (
                    <div class="border border-border rounded-lg p-4 hover:border-primary transition-colors">
                     <h4 class="font-semibold mb-2">
-                      <a href={`/post/${related.id}`} class="hover:text-primary transition-colors">
+                      <a href={`/post/${new Date(related.data.pubDate).getFullYear()}/${(new Date(related.data.pubDate).getMonth() + 1).toString().padStart(2, '0')}/${related.id}`} class="hover:text-primary transition-colors">
                         {related.data.title}
                       </a>
                     </h4>
