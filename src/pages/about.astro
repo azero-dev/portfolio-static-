@@ -188,20 +188,42 @@ const canonicalUrl = Astro.url.href;
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const name = (document.getElementById('name') as HTMLInputElement)!.value;
-      const email = (document.getElementById('email') as HTMLInputElement)!.value;
-      const message = (document.getElementById('message') as HTMLTextAreaElement)!.value;
       
-      // Basic validation
-      if (!name || !email || !message) {
-        alert('Please fill in all fields.');
+      const nameInput = document.getElementById('name') as HTMLInputElement;
+      const emailInput = document.getElementById('email') as HTMLInputElement;
+      const messageInput = document.getElementById('message') as HTMLTextAreaElement;
+      
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+      const message = messageInput.value.trim();
+      
+      // Validation
+      if (!name || name.length < 2) {
+        alert('Please enter a valid name (at least 2 characters).');
+        nameInput.focus();
+        return;
+      }
+      
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address.');
+        emailInput.focus();
+        return;
+      }
+      
+      if (!message || message.length < 10) {
+        alert('Please enter a message (at least 10 characters).');
+        messageInput.focus();
         return;
       }
       
       // Construct mailto link
       const subject = `Contact from ${name}`;
-      const body = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0A${message}`;
-      window.location.href = `mailto:azer0@inferente.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+      const bodyText = `Name: ${name}\nEmail: ${email}\n\n${message}`;
+      const encodedBody = encodeURIComponent(bodyText);
+      const encodedEmail = 'ZnIucm9kbWFyQHByb3Rvbi5tZQ==';
+      
+      window.location.href = `mailto:${atob(encodedEmail)}?subject=${encodeURIComponent(subject)}&body=${encodedBody}`;
     });
   }
 </script>
